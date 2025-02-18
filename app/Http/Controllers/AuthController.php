@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -41,6 +42,10 @@ class AuthController extends Controller
         $usuario->email = $request->email;
         $usuario->password = $request->password;
         $usuario->save();
+
+        //verifacion de cuenta por correo
+        event(new Registered($usuario));
+
         //generar respuesta
         return response()->json(['message' => 'Usuario registrado'], 201);
     }
@@ -58,5 +63,25 @@ class AuthController extends Controller
         $request->user()->tokens()->delete();
         //devolver respuesta
         return response()->json(['message' => 'Sesion cerrada']);
+    }
+    public function verify($user_id, Request $request)
+    {
+        if (!$request->hasValidSignature()) {
+            return response()->json(['menssage' => 'URL Expirado'], 401);
+        }
+        $user = User::findOrFail($user_id);
+        if (!$user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+        }
+        //Envian en JSON loscorreos verificados
+        return redirect()->to('/');
+    }
+    public function resend(Request $request)
+    {
+        if ($request->user()->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Correo ya verificado'], 400);
+        }
+        $request->user()->sendEmailVerificationNotification();
+        return response()->json(['message' => 'Se ha enviado un email de verificacion']);
     }
 }

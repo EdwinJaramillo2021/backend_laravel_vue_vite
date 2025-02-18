@@ -4,10 +4,10 @@ Accept: application/json
 Content-Type: application/json
 
 {
-"name":"marcelo",
-"email":"marcelo@gmail.com",
-"password":"marcelo123",
-"c_password":"marcelo123"
+"name":"Edwin",
+"email":"edwin@gmail.com",
+"password":"edwin123",
+"c_password":"edwin123"
 }
 
 ### autentificacion (login)
@@ -16,16 +16,21 @@ Accept: application/json
 Content-Type: application/json
 
 {
-"email":"marcelo@gmail.com",
-"password":"marcelo123"
+"email":"edwin@gmail.com",
+"password":"edwin123"
 }
 
 ###perfil
 GET http://127.0.0.1:8000/api/v1/auth/profile
 Accept: application/json
-Authorization: Bearer 8|teemhCGrCdgPi1Cpwcw5v22xBSjdIx5z5dWkqhuk0a166bc9
+Authorization: Bearer 10|zTrN4fmvMtjVXaoTYdihHQpTimMX8Eg6SoZILPPP7f97d684
 
 ###Cerrar sesion
 POST http://127.0.0.1:8000/api/v1/auth/logout
 Accept: application/json
 Authorization: Bearer 8|teemhCGrCdgPi1Cpwcw5v22xBSjdIx5z5dWkqhuk0a166bc9
+
+### resent verirfacion email
+GET http://127.0.0.1:8000/api/email/resend
+Accept: application/json
+Authorization: Bearer 13|zOBMJw8DGcaWAILKS2FFSbIMJY2xs6yu8Rit9It8f88d014f

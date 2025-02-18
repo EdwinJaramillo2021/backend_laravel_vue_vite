@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password as RulesPassword;
 
 class ResetPasswordController extends Controller
 {
@@ -14,34 +18,45 @@ class ResetPasswordController extends Controller
         $request->validate([
             "email" => "required|email|exists:users"
         ]);
-
+        /*
         $token = Str::random(64);
 
         Mail::send('email.recuperar-password', ['token' => $token], function ($message) use ($request) {
             $message->to($request->email);
             $message->subject("Recuperar contraseña");
         });
-
         return response()->json(["status" => "Enviamos un correo con todas las instrucciones"]);
+        */
+        $status = Password::sendResetLink($request->only("email"));
+
+        if ($status == Password::RESET_LINK_SENT) {
+            return ["status" => __($status)];
+        }
     }
 
     public function changePassword(Request $request)
     {
         $request->validate([
-            "email" => "required|email",
             "token" => "required",
-            "password" => "required|min:8|confirmed"
+            "email" => "required|email",
+            "password" => ["required", RulesPassword::default()]
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $status = Password::reset(
+            $request->only("email", "password", "password_confirmation", "token"),
+            function (User $user, string $password) {
+                $user->forceFill([
+                    "password" => Hash::make($password),
+                ])->setRememberToken(Str::random(60));
 
-        if (!$user || !Password::validate($request->token, $user)) {
-            return response()->json(["error" => "Token inválido o usuario no encontrado"], 401);
+                $user->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+        if ($status == Password::PasswordReset) {
+            return response(["message" => "La contraseña ha sido modificada"]);
         }
-
-        $user->password = Hash::make($request->password);
-        $user->save();
-
-        return response()->json(["status" => "Contraseña cambiada correctamente"]);
+        return response(["message" => __($status)], 500);
     }
 }
