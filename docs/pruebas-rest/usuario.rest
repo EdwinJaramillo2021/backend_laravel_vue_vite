@@ -1,0 +1,32 @@
+GET http://127.0.0.1:8000/api/usuario
+Authorization: Bearer 6|BvxzmIlmih9WYnOoaswgm7i5dQVujnb3pp4nQ1qY365d6459
+
+###guardar usuario
+POST http://127.0.0.1:8000/api/usuario
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer 6|BvxzmIlmih9WYnOoaswgm7i5dQVujnb3pp4nQ1qY365d6459
+
+{
+    "name": "admin",
+    "email": "admin@gmail.com",
+    "password": "admin123"
+}
+
+### Mostrar Usuario
+GET http://127.0.0.1:8000/api/usuario/1
+
+
+### Modificar
+PUT http://127.0.0.1:8000/api/usuario/1
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "admin",
+    "email": "admin2@gmail.com",
+    "password": "admin321"
+}
+
+###Eliminar
+DELETE http://127.0.0.1:8000/api/usuario/4
