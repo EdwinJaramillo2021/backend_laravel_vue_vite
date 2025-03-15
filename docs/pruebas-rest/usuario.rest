@@ -1,5 +1,5 @@
 GET http://127.0.0.1:8000/api/usuario
-Authorization: Bearer 6|BvxzmIlmih9WYnOoaswgm7i5dQVujnb3pp4nQ1qY365d6459
+Authorization: Bearer 8|mW8vdgFgcPN4Qg8miRhYHiWnAM7mLnxw0DrjCLuw9ff84473
 
 ###guardar usuario
 POST http://127.0.0.1:8000/api/usuario
@@ -30,3 +30,4 @@ Content-Type: application/json
 
 ###Eliminar
 DELETE http://127.0.0.1:8000/api/usuario/4
+Accept: application/json
